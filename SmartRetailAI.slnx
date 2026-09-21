@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SmartRetailAI.Api/SmartRetailAI.Api.csproj" />
+  </Folder>
+</Solution>
