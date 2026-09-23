@@ -16,6 +16,9 @@ public class ProductRequest
     [MaxLength(500)]
     public string? Description { get; set; }
 
+    [Range(1, int.MaxValue)]
+    public int? CategoryId { get; set; }
+
     [Range(0, double.MaxValue)]
     [Precision(12, 3)]
     public decimal CostPrice { get; set; }

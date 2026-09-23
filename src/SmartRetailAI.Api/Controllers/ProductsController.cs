@@ -16,6 +16,7 @@ public class ProductsController(AppDbContext dbContext) : ControllerBase
     {
         var query = dbContext.Products
             .AsNoTracking()
+            .Include(product => product.Category)
             .Where(product => product.IsActive);
 
         if (!string.IsNullOrWhiteSpace(search))
@@ -39,6 +40,7 @@ public class ProductsController(AppDbContext dbContext) : ControllerBase
     {
         var product = await dbContext.Products
             .AsNoTracking()
+            .Include(product => product.Category)
             .FirstOrDefaultAsync(product =>
                 product.Id == id && product.IsActive);
 
@@ -58,6 +60,7 @@ public class ProductsController(AppDbContext dbContext) : ControllerBase
 
         var product = await dbContext.Products
             .AsNoTracking()
+            .Include(product => product.Category)
             .FirstOrDefaultAsync(product =>
                 product.Barcode == normalizedBarcode &&
                 product.IsActive);
@@ -87,11 +90,31 @@ public class ProductsController(AppDbContext dbContext) : ControllerBase
             });
         }
 
+        Category? category = null;
+
+        if (request.CategoryId.HasValue)
+        {
+            category = await dbContext.Categories
+                .FirstOrDefaultAsync(category =>
+                    category.Id == request.CategoryId.Value &&
+                    category.IsActive);
+
+            if (category is null)
+            {
+                return BadRequest(new
+                {
+                    message = "The selected category does not exist."
+                });
+            }
+        }
+
         var product = new Product
         {
             Barcode = barcode,
             Name = request.Name.Trim(),
             Description = request.Description?.Trim(),
+            CategoryId = request.CategoryId,
+            Category = category,
             CostPrice = request.CostPrice,
             SellingPrice = request.SellingPrice,
             TaxRate = request.TaxRate,
@@ -137,9 +160,26 @@ public class ProductsController(AppDbContext dbContext) : ControllerBase
             });
         }
 
+        if (request.CategoryId.HasValue)
+        {
+            var categoryExists = await dbContext.Categories
+                .AnyAsync(category =>
+                    category.Id == request.CategoryId.Value &&
+                    category.IsActive);
+
+            if (!categoryExists)
+            {
+                return BadRequest(new
+                {
+                    message = "The selected category does not exist."
+                });
+            }
+        }
+
         product.Barcode = barcode;
         product.Name = request.Name.Trim();
         product.Description = request.Description?.Trim();
+        product.CategoryId = request.CategoryId;
         product.CostPrice = request.CostPrice;
         product.SellingPrice = request.SellingPrice;
         product.TaxRate = request.TaxRate;

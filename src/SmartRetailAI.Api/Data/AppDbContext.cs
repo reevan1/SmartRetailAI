@@ -8,12 +8,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 {
     public DbSet<Product> Products => Set<Product>();
 
+    public DbSet<Category> Categories => Set<Category>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Product>()
             .HasIndex(product => product.Barcode)
+            .IsUnique();
+
+        modelBuilder.Entity<Category>()
+            .HasIndex(category => category.Name)
             .IsUnique();
     }
 }

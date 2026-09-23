@@ -18,6 +18,10 @@ public class Product
     [MaxLength(500)]
     public string? Description { get; set; }
 
+    public int? CategoryId { get; set; }
+
+    public Category? Category { get; set; }
+
     [Precision(12, 3)]
     public decimal CostPrice { get; set; }
 
