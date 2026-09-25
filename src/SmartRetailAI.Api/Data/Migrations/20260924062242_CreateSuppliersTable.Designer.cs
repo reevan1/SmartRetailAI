@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SmartRetailAI.Api.Data;
@@ -11,9 +12,11 @@ using SmartRetailAI.Api.Data;
 namespace SmartRetailAI.Api.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260924062242_CreateSuppliersTable")]
+    partial class CreateSuppliersTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,34 +121,6 @@ namespace SmartRetailAI.Api.Data.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("SmartRetailAI.Api.Models.ProductSupplier", b =>
-                {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SupplierId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsPreferred")
-                        .HasColumnType("boolean");
-
-                    b.Property<int?>("LeadTimeDays")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal?>("SupplierCost")
-                        .HasPrecision(12, 3)
-                        .HasColumnType("numeric(12,3)");
-
-                    b.HasKey("ProductId", "SupplierId");
-
-                    b.HasIndex("SupplierId");
-
-                    b.ToTable("ProductSuppliers");
-                });
-
             modelBuilder.Entity("SmartRetailAI.Api.Models.Supplier", b =>
                 {
                     b.Property<int>("Id")
@@ -199,25 +174,6 @@ namespace SmartRetailAI.Api.Data.Migrations
                         .HasForeignKey("CategoryId");
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("SmartRetailAI.Api.Models.ProductSupplier", b =>
-                {
-                    b.HasOne("SmartRetailAI.Api.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SmartRetailAI.Api.Models.Supplier", "Supplier")
-                        .WithMany()
-                        .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Supplier");
                 });
 #pragma warning restore 612, 618
         }
